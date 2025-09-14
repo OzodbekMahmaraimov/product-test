@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 
 const Card = () => {
-  const [state, getState] = useState([]);
+  const [state, setstate] = useState([]);
   const [form, setForm] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
   });
-  let url = "http://45.138.159.183:6061/api/Product";
+
+  const url = "http://45.138.159.183:6061/api/Product";
 
   useEffect(() => {
     getData();
@@ -22,19 +23,17 @@ const Card = () => {
       });
 
       let data = await response.json();
-      getState(data);
-
-      console.log(data.name);
+      setstate(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function deleteData(od) {
+  async function deleteData(id) {
     try {
-      await fetch("/api/Products", {
-        method: "Delete",
-        body: JSON.stringify({ od }),
+      await fetch(`${url}/${id}`, {
+        method: "DELETE",
       });
       getData();
     } catch (err) {
@@ -43,12 +42,12 @@ const Card = () => {
   }
 
   async function addData() {
-
     try {
-      await fetch("/api/Products", {
+      await fetch(url, {
         method: "POST",
         body: JSON.stringify(form),
       });
+      setForm({ name: "", description: "", price: "", category: "" }); // reset form
       getData();
     } catch (err) {
       console.log(err);
@@ -57,39 +56,61 @@ const Card = () => {
 
   return (
     <>
-      {/* <form className="w-100" action="POST"> */}
-        <input className="border-5"
+      <div>
+        <input
+          className="border p-2 rounded"
           type="text"
+          value={form.name}
+          placeholder="Name"
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
-        <input className="border-5"
+        <input
+          className="border p-2 rounded"
           type="text"
+          value={form.description}
+          placeholder="Description"
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
-        <input className="border-5"
+        <input
+          className="border p-2 rounded"
           type="text"
+          value={form.price}
+          placeholder="Price"
           onChange={(e) => setForm({ ...form, price: e.target.value })}
         />
-        <input className="border-5"
+        <input
+          className="border p-2 rounded"
           type="text"
+          value={form.category}
+          placeholder="Category"
           onChange={(e) => setForm({ ...form, category: e.target.value })}
         />
         <button
-          onClick={() => addData()}
-          className="bg-amber-800 text-white p-5"
+          type="button"
+          onClick={addData}
+          className="bg-amber-800 text-white p-3 rounded"
         >
           Add
         </button>
-      {/* </form> */}
+      </div>
 
-      {state.map((data) => (
-        <ul key={data.id}>
-          <li>{data.name}</li>
-          <li>{data.description}</li>
-          <li>{data.price}</li>
-          <li>{data.createdAt}</li>
-          <li>{data.category}</li>
-          <button onClick={() => deleteData(p.id)}>Delete</button>
+      {state.map((item) => (
+        <ul
+          key={item.id}
+          className="border p-3 mb-3 rounded shadow-md max-w-md"
+        >
+          <li><strong>Name:</strong> {item.name}</li>
+          <li><strong>Description:</strong> {item.description}</li>
+          <li><strong>Price:</strong> {item.price}</li>
+          <li><strong>Category:</strong> {item.category}</li>
+          <li><strong>Created At:</strong> {item.createdAt}</li>
+          <button
+            type="button"
+            onClick={() => deleteData(item.id)}
+            className="mt-2 bg-red-600 text-white px-3 py-1 rounded"
+          >
+            Delete
+          </button>
         </ul>
       ))}
     </>
