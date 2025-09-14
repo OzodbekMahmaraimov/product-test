@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
+
 const Card = () => {
   const [state, setstate] = useState([]);
   const [form, setForm] = useState({
@@ -8,9 +9,10 @@ const Card = () => {
     description: "",
     price: "",
     category: "",
+    createdAt: 'Sunday',
   });
 
-  const url = "http://45.138.159.183:6061/api/Product";
+  const BASE_URL = "http://45.138.159.183:6061/api/Product";
 
   useEffect(() => {
     getData();
@@ -18,8 +20,8 @@ const Card = () => {
 
   async function getData() {
     try {
-      let response = await fetch(url, {
-        method: "GET",
+      let response = await fetch(BASE_URL, {
+        method: "GET"
       });
 
       let data = await response.json();
@@ -32,7 +34,7 @@ const Card = () => {
 
   async function deleteData(id) {
     try {
-      await fetch(`${url}/${id}`, {
+      await fetch(`${BASE_URL}/${id}`, {
         method: "DELETE",
       });
       getData();
@@ -43,8 +45,11 @@ const Card = () => {
 
   async function addData() {
     try {
-      await fetch(url, {
+      await fetch(BASE_URL, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(form),
       });
       setForm({ name: "", description: "", price: "", category: "" }); // reset form
@@ -56,7 +61,7 @@ const Card = () => {
 
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-3 w-80 mb-6">
         <input
           className="border p-2 rounded"
           type="text"
@@ -99,11 +104,21 @@ const Card = () => {
           key={item.id}
           className="border p-3 mb-3 rounded shadow-md max-w-md"
         >
-          <li><strong>Name:</strong> {item.name}</li>
-          <li><strong>Description:</strong> {item.description}</li>
-          <li><strong>Price:</strong> {item.price}</li>
-          <li><strong>Category:</strong> {item.category}</li>
-          <li><strong>Created At:</strong> {item.createdAt}</li>
+          <li>
+            <strong>Name:</strong> {item.name}
+          </li>
+          <li>
+            <strong>Description:</strong> {item.description}
+          </li>
+          <li>
+            <strong>Price:</strong> {item.price}
+          </li>
+          <li>
+            <strong>Category:</strong> {item.category}
+          </li>
+          <li>
+            <strong>Created At:</strong> {item.createdAt}
+          </li>
           <button
             type="button"
             onClick={() => deleteData(item.id)}
